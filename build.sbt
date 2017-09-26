@@ -3,20 +3,21 @@ name := """streaming-vehicle-app"""
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.10.5"
+scalaVersion := "2.11.0"
 
 val kafkaVersion = "0.10.0.0"
-val sparkVersion = "1.6.0"
-val sparkCassandraConnectorVersion = "1.6.0-M2"
+val sparkVersion = "2.0.0"
+val sparkCassandraConnectorVersion = "2.0.0-M2"
 
 
 libraryDependencies ++= Seq(
-  "com.datastax.spark" % "spark-cassandra-connector_2.10" % sparkCassandraConnectorVersion % "provided",
+  "com.datastax.spark" % "spark-cassandra-connector_2.11" % sparkCassandraConnectorVersion % "provided",
   "org.apache.spark"  %% "spark-mllib"           % sparkVersion % "provided",
   "org.apache.spark"  %% "spark-graphx"          % sparkVersion % "provided",
   "org.apache.spark"  %% "spark-sql"             % sparkVersion % "provided",
   "org.apache.spark"  %% "spark-streaming"       % sparkVersion % "provided",
-  "org.apache.spark"  %% "spark-streaming-kafka" % sparkVersion % "provided",
+//  "org.apache.spark"  %% "spark-streaming-kafka-0-8_2.10" % sparkVersion % "provided",
+  "org.apache.spark"  %% "spark-streaming-kafka-0-8" % sparkVersion % "provided",
   "com.datastax.cassandra" % "cassandra-driver-core" % "3.0.2" % "provided",
   "com.datastax.cassandra" % "dse-driver" % "1.0.0" % "provided"
 //  "org.scala-lang" % "scala-reflect" % "2.10.5"
