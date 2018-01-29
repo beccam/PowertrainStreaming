@@ -13,9 +13,13 @@ import kafka.serializer.StringDecoder
 import org.apache.log4j.Logger
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.streaming.dstream.DStream
-import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.spark.streaming.kafka010._
+import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
+import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
 
 
 object StreamVehicleData {
@@ -75,8 +79,14 @@ object StreamVehicleData {
 
 
     val topics: Set[String] = topicsArg.split(",").map(_.trim).toSet
-    val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers)
-
+    val kafkaParams = Map[String, Object](
+      "bootstrap.servers" -> brokers,
+      "key.deserializer" -> classOf[StringDeserializer],
+      "value.deserializer" -> classOf[StringDeserializer],
+      "group.id" -> "use_a_separate_group_id_for_each_stream",
+      "auto.offset.reset" -> "latest",
+      "enable.auto.commit" -> (false: java.lang.Boolean)
+    )
     localLogger.info(s"connecting to brokers: $brokers")
     localLogger.info(s"sparkStreamingContext: $sparkStreamingContext")
     localLogger.info(s"kafkaParams: $kafkaParams")
@@ -85,10 +95,14 @@ object StreamVehicleData {
 
     import com.datastax.spark.connector.streaming._
 
-    val rawVehicleStream = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](sparkStreamingContext, kafkaParams, topics)
+    val rawVehicleStream = KafkaUtils.createDirectStream[String, String](
+      sparkStreamingContext,
+      PreferConsistent,
+      Subscribe[String, String](topics, kafkaParams)
+    )
     rawVehicleStream.print()
 
-    val splitArray = rawVehicleStream.map { case (key, rawVehicleStr) =>
+    val splitArray = rawVehicleStream.map { case (key, rawVehicleStr: String) =>
       val strings = rawVehicleStr.split(",")
 
       val logger = Logger.getLogger("StreamVehicleData")
