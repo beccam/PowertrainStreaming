@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
   "org.apache.spark"  %% "spark-graphx"          % sparkVersion % "provided",
   "org.apache.spark"  %% "spark-sql"             % sparkVersion % "provided",
   "org.apache.spark"  %% "spark-streaming"       % sparkVersion % "provided",
-  "org.apache.spark"  %% "spark-streaming-kafka" % sparkVersion % "provided",
+  "org.apache.spark"  %% "spark-streaming-kafka-0-10" % sparkVersion %"provided",
   "com.datastax.cassandra" % "cassandra-driver-core" % "3.0.2" % "provided",
   "com.datastax.cassandra" % "dse-driver" % "1.0.0" % "provided"
 //  "org.scala-lang" % "scala-reflect" % "2.10.5"
