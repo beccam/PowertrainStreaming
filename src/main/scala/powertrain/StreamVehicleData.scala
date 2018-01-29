@@ -20,7 +20,6 @@ import org.apache.spark.{SparkConf, SparkContext}
 
 object StreamVehicleData {
 
-  def check(x: Int) = if (x == 1) "Peyton" else "Ryan"
 
   val localLogger = Logger.getLogger("StreamVehicleData")
 
