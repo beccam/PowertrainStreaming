@@ -102,13 +102,13 @@ object StreamVehicleData {
     )
     rawVehicleStream.print()
 
-    val splitArray = rawVehicleStream.map { case (key, rawVehicleStr: String) =>
-      val strings = rawVehicleStr.split(",")
+    val splitArray = rawVehicleStream.map(record => {
+      val strings = record.value.split(",")
 
       val logger = Logger.getLogger("StreamVehicleData")
       logger.info(s"update type: ${strings(0)}")
       strings
-    }
+    })
 
     splitArray.filter(data => data(0) == "location")
       .map { data =>
