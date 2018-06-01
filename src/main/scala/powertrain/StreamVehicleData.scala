@@ -100,7 +100,8 @@ object StreamVehicleData {
       PreferConsistent,
       Subscribe[String, String](topics, kafkaParams)
     )
-    rawVehicleStream.print()
+    rawVehicleStream.map(record=>(record.value().toString)).print
+
 
     val splitArray = rawVehicleStream.map(record => {
       val strings = record.value.split(",")
