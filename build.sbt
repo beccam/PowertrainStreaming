@@ -3,33 +3,49 @@ name := """streaming-vehicle-app"""
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.10.5"
-
-val kafkaVersion = "0.10.0.0"
 val sparkVersion = "2.0.2"
-val sparkCassandraConnectorVersion = "2.0.6"
 
+scalaVersion := "2.11.8"
+
+resolvers += Resolver.mavenLocal // for testing
+resolvers += "DataStax Repo" at "https://repo.datastax.com/public-repos/"
+
+val dseVersion = "6.0.0"
+
+// Please make sure that following DSE version matches your DSE cluster version.
+// Exclusions are solely for running integrated testing
+// Warning Sbt 0.13.13 or greater is required due to a bug with dependency resolution
+libraryDependencies += "com.datastax.dse" % "dse-spark-dependencies" % dseVersion % "provided" exclude(
+    "org.apache.directory.api", "*")
+
+// Test Dependencies
+// The 'test/resources' Directory in should match the resources directory in the `it` directory
+// for the version of the Spark Cassandra Connector in use.
+val scalaTestVersion = "3.0.0"
+val connectorVersion = "2.0.7"
+val jUnitVersion = "4.12"
+val cassandraVersion = "3.2"
 
 libraryDependencies ++= Seq(
-  "com.datastax.spark" % "spark-cassandra-connector_2.10" % sparkCassandraConnectorVersion % "provided",
-  "org.apache.spark"  %% "spark-mllib"           % sparkVersion % "provided",
-  "org.apache.spark"  %% "spark-graphx"          % sparkVersion % "provided",
-  "org.apache.spark"  %% "spark-sql"             % sparkVersion % "provided",
-  "org.apache.spark"  %% "spark-streaming"       % sparkVersion % "provided",
+  "com.datastax.spark" %% "spark-cassandra-connector-embedded" % connectorVersion % "test",
   "org.apache.spark"  %% "spark-streaming-kafka-0-10" % sparkVersion %"provided",
-  "com.datastax.cassandra" % "cassandra-driver-core" % "3.0.2" % "provided",
-  "com.datastax.cassandra" % "dse-driver" % "1.0.0" % "provided"
-//  "org.scala-lang" % "scala-reflect" % "2.10.5"
-)
-//libraryDependencies ++= Seq(
-//  "com.datastax.spark" % "spark-cassandra-connector_2.10" % sparkCassandraConnectorVersion,
-//  "org.apache.spark"  %% "spark-mllib"           % sparkVersion,
-//  "org.apache.spark"  %% "spark-graphx"          % sparkVersion,
-//  "org.apache.spark"  %% "spark-sql"             % sparkVersion,
-//  "org.apache.spark"  %% "spark-streaming"       % sparkVersion,
-//  "org.apache.spark"  %% "spark-streaming-kafka" % sparkVersion,
-//  "com.datastax.cassandra" % "cassandra-driver-core" % "3.0.2",
-//  "com.datastax.cassandra" % "dse-driver" % "1.0.0",
-//  "com.typesafe" % "config" % "1.3.0"
-////  "org.scala-lang" % "scala-reflect" % "2.10.5"
+  "org.apache.cassandra" % "cassandra-all" % cassandraVersion % "test",
+  "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
+  "junit" % "junit" % "4.12" % "test"
+).map(_.excludeAll(
+  ExclusionRule("org.slf4j","log4j-over-slf4j"),
+  ExclusionRule("org.slf4j","slf4j-log4j12"))
+)  // Excluded to allow for Cassandra to run embedded
+
+//Forking is required for the Embedded Cassandra
+fork in Test := true
+
+
+//Your dependencies
+//libraryDependencies += "org.apache.commons" % "commons-math3" % "3.6.1"
+//libraryDependencies += "org.apache.commons" % "commons-csv" % "1.0"
+
+assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false)
+//assemblyShadeRules in assembly := Seq(
+//  ShadeRule.rename("org.apache.commons.csv.**" -> "shaded.org.apache.commons.csv.@1").inAll
 //)
