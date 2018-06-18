@@ -83,7 +83,7 @@ object StreamVehicleData {
       "bootstrap.servers" -> brokers,
       "key.deserializer" -> classOf[StringDeserializer],
       "value.deserializer" -> classOf[StringDeserializer],
-      "group.id" -> "use_a_separate_group_id_for_each_stream",
+      "group.id" -> "1",
       "auto.offset.reset" -> "latest",
       "enable.auto.commit" -> (false: java.lang.Boolean)
     )
@@ -100,7 +100,8 @@ object StreamVehicleData {
       PreferConsistent,
       Subscribe[String, String](topics, kafkaParams)
     )
-    rawVehicleStream.map(record=>(record.value().toString)).print
+    //rawVehicleStream.map(record=>(record.value().toString)).print
+    rawVehicleStream.map(record=>(record.value().toString))
 
 
     val splitArray = rawVehicleStream.map(record => {
