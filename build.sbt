@@ -3,9 +3,9 @@ name := """streaming-vehicle-app"""
 
 version := "1.0-SNAPSHOT"
 
-val sparkVersion = "2.0.2"
+val sparkVersion = "2.4.0"
 
-scalaVersion := "2.11.8"
+scalaVersion := "2.11.12"
 
 resolvers += Resolver.mavenLocal // for testing
 resolvers += "DataStax Repo" at "https://repo.datastax.com/public-repos/"
@@ -28,7 +28,7 @@ val cassandraVersion = "3.2"
 
 libraryDependencies ++= Seq(
   "com.datastax.spark" %% "spark-cassandra-connector-embedded" % connectorVersion % "test",
-  "org.apache.spark"  %% "spark-streaming-kafka-0-10" % sparkVersion %"provided",
+  "org.apache.spark"  %% "spark-streaming-kafka-0-10_2.12" % sparkVersion %"provided",
   "org.apache.cassandra" % "cassandra-all" % cassandraVersion % "test",
   "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
   "junit" % "junit" % "4.12" % "test"
